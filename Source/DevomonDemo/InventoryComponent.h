@@ -17,17 +17,18 @@ public:
 	// Sets default values for this component's properties
 	UInventoryComponent();
 
-	// Adds an Item to the Inventory
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	// Adds an Item to the Inventory Array
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Inventory Component")
 	void AddItem(const FItemData NewItem);
-	// On Iventory Items Changed
+
+	// Replication On Owning Client to Show Inventory Change In UI & Sound
 	UFUNCTION()
 	void OnRep_InventoryItems();
 		
 	// All Inventory Items Player has
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_InventoryItems, Category = "ItemData")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_InventoryItems, Category = "Inventory Component")
 	TArray< FItemData> InventoryItems;
-	// All Inventory Items Player has
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemData")
-	class USoundBase* PickupSound;
+	// Sound Played On Picking up New Items
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Component")
+	class USoundBase* PickupSound = nullptr;
 };

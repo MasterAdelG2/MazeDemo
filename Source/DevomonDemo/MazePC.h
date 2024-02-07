@@ -18,27 +18,27 @@ public:
 	// Sets default values for this actor's properties
 	AMazePC();
 
-	// 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	// Spawns The Default Maze Character Assigned or Spectator if chose no team
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maze Player Controller")
 	void SpawnPlayerPawn();
-	//
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, BlueprintPure)
+	// Gets The Spawn Transform for the pawn by the player team
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, BlueprintPure, Category = "Maze Player Controller")
 	FTransform GetSpawnTransform(ETeam PlayerTeam);
-	// 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, BlueprintPure)
+	// Gets the Spawn Point Tag by the player Team
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, BlueprintPure, Category = "Maze Player Controller")
 	FString GetSpawnTag(ETeam PlayerTeam);
-	// 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, BlueprintPure)
+	// Gets The Pawn Class to be spawned
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, BlueprintPure, Category = "Maze Player Controller")
 	TSubclassOf<APawn> GetSpawnClass(ETeam PlayerTeam);
-	// 
-	UFUNCTION(BlueprintCallable, Client, reliable)
+	// Shows the maze game screen & enables game input
+	UFUNCTION(BlueprintCallable, Client, reliable, Category = "Maze Player Controller")
 	void OC_OnStartGame();
-	// 
-	UFUNCTION(BlueprintCallable, Client, reliable)
+	// Shows the end game screen & disables game input
+	UFUNCTION(BlueprintCallable, Client, reliable, Category = "Maze Player Controller")
 	void OC_OnEndGame();
 
 	// The Default Maze Characer Class that player will posses if not spectator
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PawnClass")
-	TSubclassOf<APawn> DefaultMazeCharacter;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Maze Player Controller")
+	TSubclassOf<APawn> DefaultMazeCharacter = nullptr;
 
 };

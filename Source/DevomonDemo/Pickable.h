@@ -14,11 +14,11 @@ class DEVOMONDEMO_API APickable : public AActor
 	
 private:
 	/** Sphere Collision Component To Detect Picking up Pawn */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
-	class USphereComponent* SphereCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pickable, meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* SphereCollision = nullptr;
 	/** Static Mesh Component To show for Picking up Pawn */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* Model;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pickable, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* Model = nullptr;
 
 protected:
 	// Called when the game starts or when spawned
@@ -28,13 +28,17 @@ public:
 	// Sets default values for this actor's properties
 	APickable();
 
-	//
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	// Sets The Mesh to the given Item Data shape
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Pickable")
 	void SetModel();
 
 	// Item properties on the Pickable object
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "ItemData")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Pickable")
 	FItemData ItemData;
+	
+	// Material that will be applied on the Pickable object
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pickable")
+	class UMaterialInstance* ColorMaterial;
 
 	// On Player Collides with the Pickable object
 	UFUNCTION()

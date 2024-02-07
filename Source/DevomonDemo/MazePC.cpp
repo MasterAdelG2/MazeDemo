@@ -1,12 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "MazeBFL.h"
 #include "MazePC.h"
+#include "MazeBFL.h"
 #include "MazePS.h"
 #include "MazeGM.h"
 #include "MazeHUD.h"
 #include "MazePlayerCharacter.h"
 #include "GameFramework/SpectatorPawn.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMazePC::AMazePC()
@@ -18,13 +19,13 @@ AMazePC::AMazePC()
 }
 void AMazePC::SpawnPlayerPawn_Implementation()
 {
-	AMazePS* MazePS = UMazeBFL::GetMazePS(this);
-	if (ensure(MazePS))
+	AMazePS* MazePS = GetPlayerState<AMazePS>();
+	if (MazePS)
 	{
 		FTransform SpawnTransform = GetSpawnTransform(MazePS->PlayerTeam);
 		TSubclassOf<APawn> PawnClass = GetSpawnClass(MazePS->PlayerTeam);
 		UWorld* World = GetWorld();
-		if (ensure(World))
+		if (World)
 		{
 			APawn* PawnRef = World->SpawnActor<APawn>(PawnClass, SpawnTransform);
 			Possess(PawnRef);
@@ -37,10 +38,10 @@ FTransform AMazePC::GetSpawnTransform_Implementation(ETeam PlayerTeam)
 {
 	FVector SpawnLoc = FVector();
 	AMazeGM* MazeGM = UMazeBFL::GetMazeGM(this);
-	if (ensure(MazeGM))
+	if (MazeGM)
 	{
 		AActor* StartPoint = MazeGM->FindPlayerStart(this, GetSpawnTag(PlayerTeam));
-		if (ensure(StartPoint))
+		if (StartPoint)
 		{
 			SpawnLoc = StartPoint->GetActorLocation();
 		}
@@ -69,7 +70,7 @@ TSubclassOf<APawn> AMazePC::GetSpawnClass_Implementation(ETeam PlayerTeam)
 	{
 		return ASpectatorPawn::StaticClass();
 	}
-	if (ensure(DefaultMazeCharacter))
+	if (DefaultMazeCharacter)
 	{
 		return DefaultMazeCharacter;
 	}
@@ -79,7 +80,7 @@ TSubclassOf<APawn> AMazePC::GetSpawnClass_Implementation(ETeam PlayerTeam)
 void AMazePC::OC_OnStartGame_Implementation()
 {
 	AMazeHUD* MazeHUD = UMazeBFL::GetMazeHUD(this);
-	if (ensure(MazeHUD))
+	if (MazeHUD)
 	{
 		MazeHUD->OnStartGame();
 	}
@@ -92,7 +93,7 @@ void AMazePC::OC_OnEndGame_Implementation()
 {
 	//
 	APawn* ControlledPawn = GetPawn();
-	if (ensure(ControlledPawn))
+	if (ControlledPawn)
 	{
 		ControlledPawn->DisableInput(this);
 	}
@@ -102,7 +103,7 @@ void AMazePC::OC_OnEndGame_Implementation()
 	SetInputMode(UIInput);
 	//
 	AMazeHUD* MazeHUD = UMazeBFL::GetMazeHUD(this);
-	if (ensure(MazeHUD))
+	if (MazeHUD)
 	{
 		MazeHUD->OnEndGame();
 	}

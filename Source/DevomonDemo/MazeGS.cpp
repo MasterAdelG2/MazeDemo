@@ -19,11 +19,11 @@ void AMazeGS::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetim
 
 void AMazeGS::OnObjectivePickup_Implementation(AObjective* Objective, APlayerController* PlayerController)
 {
-	if (ensure(Objective) && ensure(PlayerController))
+	if (Objective && PlayerController)
 	{
 		SpawnedObjectives.Remove(Objective);
 		AMazePS* MazePS = PlayerController->GetPlayerState<AMazePS>();
-		if (ensure(MazePS))
+		if (MazePS)
 		{
 			if (MazePS->PlayerTeam == ETeam::Team_A)
 			{
@@ -43,9 +43,16 @@ void AMazeGS::CheckGameEnd_Implementation()
 	if (SpawnedObjectives.Num() == 0)
 	{
 		AMazeGM* MazeGM = UMazeBFL::GetMazeGM(this);
-		if (ensure(MazeGM))
+		if (MazeGM)
 		{
-			MazeGM->EndGame();
+			// Delay 1 Sec Before End Game
+			FTimerHandle THandle;
+			GetWorld()->GetTimerManager().SetTimer(
+				THandle,
+				MazeGM,
+				&AMazeGM::EndGame,
+				1.f,
+				false);
 		}
 	}
 }

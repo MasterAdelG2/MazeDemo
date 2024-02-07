@@ -36,9 +36,9 @@ void AMazeGM::SpawnObjectives_Implementation()
 		UWorld* World = GetWorld();
 		if (SpawnPoints.Num() > 0 &&
 			ObjectivesData.Num() > i &&
-			ensure(World))
+			World)
 		{
-			int32 RandomIndex = FMath::RandRange(0, SpawnPoints.Num());
+			int32 RandomIndex = FMath::RandRange(0, SpawnPoints.Num()-1);
 			FTransform SpawnTransform = FTransform(SpawnPoints[RandomIndex]->GetActorLocation());
 			AActor* MyDeferredActor = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, AObjective::StaticClass(), SpawnTransform);
 			AObjective* SpawnedObjective = Cast<AObjective>(MyDeferredActor);
@@ -49,7 +49,7 @@ void AMazeGM::SpawnObjectives_Implementation()
 		}
 	}
 	AMazeGS* MazeGS = UMazeBFL::GetMazeGS(this);
-	if (ensure(MazeGS))
+	if (MazeGS)
 	{
 		MazeGS->SpawnedObjectives = AllSpawnedObjectives;
 	}
@@ -63,7 +63,7 @@ bool AMazeGM::CanStartGame_Implementation()
 	for (TObjectPtr<APlayerState> ps : AllPlayersStates)
 	{
 		AMazePS* MazePS = Cast<AMazePS>(ps);
-		if (ensure(MazePS))
+		if (MazePS)
 		{
 			if (MazePS->bIsReady)
 			{
@@ -87,10 +87,7 @@ void AMazeGM::StartGame_Implementation()
 	SpawnObjectives();
 	for (AMazePC* pc : AllPCs)
 	{
-		if (ensure(pc))
-		{
-			pc->SpawnPlayerPawn();
-		}
+		pc->SpawnPlayerPawn();
 	}
 }
 
@@ -98,29 +95,40 @@ void AMazeGM::CheckReadyStates_Implementation()
 {
 	if (CanStartGame())
 	{
-		// Delay 1 Sec !!
-		StartGame();
+		// Delay 1 Sec Before Start Game
+		FTimerHandle THandle;
+		GetWorld()->GetTimerManager().SetTimer(
+			THandle,
+			this,
+			&AMazeGM::StartGame,
+			1.f,
+			false);
 	}
 }
 
 void AMazeGM::EndGame_Implementation()
 {
-	// Delay 1 Sec !!
 	for (AMazePC* pc : AllPCs)
 	{
-		if (ensure(pc))
+		if (pc)
 		{
 			pc->OC_OnEndGame();
 		}
 	}
-	// Delay 20 Sec !!
-	RestartLevel();
+	// Delay 20 Sec Before Restart Game
+	FTimerHandle THandle;
+	GetWorld()->GetTimerManager().SetTimer(
+		THandle,
+		this,
+		&AMazeGM::RestartLevel,
+		20.f,
+		false);
 }
 
 void AMazeGM::RestartLevel_Implementation()
 {
 	UWorld* World = GetWorld();
-	if (ensure(World))
+	if (World)
 	{
 		World->ServerTravel(TEXT("/Game/Maps/MazeMap"));
 	}
@@ -131,11 +139,11 @@ void AMazeGM::OnPostLogin(AController* NewPlayer)
 	Super::OnPostLogin(NewPlayer);
 	//
 	AMazePC* MazePC = Cast<AMazePC>(NewPlayer);
-	if (ensure(MazePC))
+	if (MazePC)
 	{
 		AllPCs.AddUnique(MazePC);
 		AMazePS* MazePS = MazePC->GetPlayerState<AMazePS>();
-		if (ensure(MazePS))
+		if (MazePS)
 		{
 			int32 NameIndex = AllPCs.Num() - 1;
 			if (NameIndex < RandomPlayerNames.Num())
@@ -151,7 +159,7 @@ void AMazeGM::Logout(AController* Exiting)
 	Super::Logout(Exiting);
 	//
 	AMazePC* MazePC = Cast<AMazePC>(Exiting);
-	if (ensure(MazePC))
+	if (MazePC)
 	{
 		AllPCs.Remove(MazePC);
 	}

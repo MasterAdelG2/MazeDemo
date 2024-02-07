@@ -45,24 +45,24 @@ class AMazePlayerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
-	/** Inventory Component */
+	/** Inventory Component to hold all Inventory Items */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
 	UInventoryComponent* InventoryComponent;
 
 public:
 	AMazePlayerCharacter();
 	
-	// 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	// Picks up a pickable object to inventory
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maze Player Character")
 	void Pickup(class APickable* PickableRef);
-	// 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	// Updates The Objective Meter in maze Game Screen
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maze Objective Meter")
 	void UpdateObjectiveMeterValue();
-	// 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// Sets Character Color depending on thier team
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Maze Player Character")
 	void SetCharacterColor();
-	// 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, BlueprintPure)
+	// Gets The Nearest Objective to the player and calculates the distance to show in the UI meter
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, BlueprintPure, Category = "Maze Objective Meter")
 	int32 GetNearestObjectiveDistance();
 
 protected:

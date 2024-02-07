@@ -15,7 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	ASpawnPoint();
 
-	//
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	UBillboardComponent* BillboardComponent;
+	// Billboard to make it easier for Level Designers to configure the maze
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn Point")
+	UBillboardComponent* BillboardComponent = nullptr;
 };

@@ -19,19 +19,19 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	//
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// Shows The Deploy Screen to select Teams
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Maze HUD")
 	void OnJoinServer();
-	//
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// Removes The Deploy Screen And Shows The Game Screen
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Maze HUD")
 	void OnStartGame();
-	//
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// Shows The End Screen Above the Game Screen
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Maze HUD")
 	void OnEndGame();
-	//
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// Updates The Meter Value on the Game Screen
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Maze HUD")
 	void SetMeter(int32 MeterValue);
-	//
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// Updates The Inventory Items List on Game Screen
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Maze HUD")
 	void UpdateInventoryList();
 };

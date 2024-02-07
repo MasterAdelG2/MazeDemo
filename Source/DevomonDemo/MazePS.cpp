@@ -19,7 +19,7 @@ void AMazePS::SR_ToggleReady_Implementation()
 {
 	bIsReady = !bIsReady;
 	AMazeGM* MazeGM = UMazeBFL::GetMazeGM(this);
-	if (ensure(MazeGM))
+	if (MazeGM)
 	{
 		MazeGM->CheckReadyStates();
 	}

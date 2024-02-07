@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "DevomonDemo.generated.h"
 
-// Team Selection
+// Team choices
 UENUM(BlueprintType)
 enum class ETeam : uint8
 {

@@ -65,8 +65,8 @@ AMazePlayerCharacter::AMazePlayerCharacter()
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMesh(TEXT("SkeletalMesh'/Game/Models/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
 	GetMesh()->SetSkeletalMesh(CharacterMesh.Object);
-
-
+	GetMesh()->SetRelativeLocation(FVector(0, 0, -96.f));
+	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -88,7 +88,7 @@ void AMazePlayerCharacter::BeginPlay()
 	{
 		SetCharacterColor();
 		UWorld* World = GetWorld();
-		if (ensure(World))
+		if (World && IsLocallyControlled())
 		{
 			FTimerHandle THandle;
 			World->GetTimerManager().SetTimer(
@@ -163,18 +163,18 @@ void AMazePlayerCharacter::Look(const FInputActionValue& Value)
 
 void AMazePlayerCharacter::Pickup_Implementation(APickable* PickableRef)
 {
-	if (ensure(PickableRef))
+	if (PickableRef)
 	{
 		InventoryComponent->AddItem(PickableRef->ItemData);
 		AMazeGS* MazeGS = UMazeBFL::GetMazeGS(this);
 		AController* PawnController = GetController();
 		AObjective* objective = Cast<AObjective>(PickableRef);
-		if (ensure(objective) && 
-			ensure(MazeGS) && 
-			ensure(PawnController))
+		if (objective && 
+			MazeGS && 
+			PawnController)
 		{
 			APlayerController* PC = Cast<APlayerController>(PawnController);
-			if (ensure(PC))
+			if (PC)
 			{
 				MazeGS->OnObjectivePickup(objective, PC);
 			}
@@ -185,10 +185,10 @@ void AMazePlayerCharacter::Pickup_Implementation(APickable* PickableRef)
 void AMazePlayerCharacter::UpdateObjectiveMeterValue_Implementation()
 {
 	AMazePC* MazePC = UMazeBFL::GetMazePC(this);
-	if (ensure(MazePC))
+	if (MazePC)
 	{
 		AMazeHUD* MazeHUD = MazePC->GetHUD<AMazeHUD>();
-		if (ensure(MazeHUD))
+		if (MazeHUD)
 		{
 			MazeHUD->SetMeter(GetNearestObjectiveDistance());
 		}
@@ -200,12 +200,12 @@ int32 AMazePlayerCharacter::GetNearestObjectiveDistance_Implementation()
 	int32 result = 0;
 	float MinimumDistance = 5000.f;
 	AMazeGS* MazeGS = UMazeBFL::GetMazeGS(this);
-	if (ensure(MazeGS))
+	if (MazeGS)
 	{
 		TArray<AObjective*> AllObjectives = MazeGS->SpawnedObjectives;
 		for (AObjective* obj : AllObjectives)
 		{
-			if (ensure(obj))
+			if (obj)
 			{
 				float ObjDistance = FVector::Distance(GetActorLocation(), obj->GetActorLocation());
 				if (ObjDistance < MinimumDistance)

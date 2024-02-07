@@ -13,7 +13,8 @@ UInventoryComponent::UInventoryComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-	SetIsReplicated(true);
+ 	SetIsReplicated(true);
+	
 	// ...
 }
 
@@ -31,11 +32,11 @@ void UInventoryComponent::AddItem_Implementation(const FItemData NewItem)
 void UInventoryComponent::OnRep_InventoryItems()
 {
 	AMazeHUD* MazeHUD = UMazeBFL::GetMazeHUD(this);
-	if (ensure(MazeHUD))
+	if (MazeHUD)
 	{
 		MazeHUD->UpdateInventoryList();
 	}
-	if (ensure(PickupSound))
+	if (PickupSound)
 	{
 		UGameplayStatics::PlaySound2D(this, PickupSound);
 	}

@@ -38,6 +38,9 @@ APickable::APickable()
 	Model->SetupAttachment(SphereCollision);
 
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &APickable::OnOverlapBegin);
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInstance> Color(TEXT("MaterialInstanceConstant'/Game/Models/Shapes/MI_Solid_Blue.MI_Solid_Blue'"));
+	ColorMaterial = Color.Object;
 }
 
 void APickable::OnOverlapBegin(UPrimitiveComponent* OverlappedComp,
@@ -50,7 +53,7 @@ void APickable::OnOverlapBegin(UPrimitiveComponent* OverlappedComp,
 	if (UKismetSystemLibrary::IsDedicatedServer(this))
 	{
 		AMazePlayerCharacter* PlayerCharacter =Cast<AMazePlayerCharacter>(OtherActor);
-		if (ensure(PlayerCharacter))
+		if (PlayerCharacter)
 		{
 			PlayerCharacter->Pickup(this);
 			Destroy();
@@ -61,4 +64,8 @@ void APickable::OnOverlapBegin(UPrimitiveComponent* OverlappedComp,
 void APickable::SetModel_Implementation()
 {
 	Model->SetStaticMesh(ItemData.Shape);
+	if (ColorMaterial)
+	{
+		Model->SetMaterial(0, ColorMaterial);
+	}
 }

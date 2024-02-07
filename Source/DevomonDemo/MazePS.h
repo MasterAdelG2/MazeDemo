@@ -16,21 +16,21 @@ class DEVOMONDEMO_API AMazePS : public APlayerState
 	GENERATED_BODY()
 
 public:
-	// Spawns All Objectives on random position
-	UFUNCTION(BlueprintCallable, Server, reliable)
+	// Toggles the ready state of the plauer
+	UFUNCTION(BlueprintCallable, Server, reliable, Category = "Maze Player State")
 	void SR_ToggleReady();
-	// 
-	UFUNCTION(BlueprintCallable, Server, reliable)
+	// Changes the player Assigned Team
+	UFUNCTION(BlueprintCallable, Server, reliable, Category = "Maze Player State")
 	void SR_JoinTeam(ETeam NewTeam);
 
 	// Selected Player Team
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Player Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Maze Player State")
 	ETeam PlayerTeam = ETeam::Spectator;
 	// Player Name
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Player Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Maze Player State")
 	FString PlayerName = TEXT("");
 	// Player's Ready State
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Player Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Maze Player State")
 	bool bIsReady = false;
 	
 };

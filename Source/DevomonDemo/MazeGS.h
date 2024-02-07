@@ -16,23 +16,23 @@ class DEVOMONDEMO_API AMazeGS : public AGameStateBase
 	GENERATED_BODY()
 	
 public:
-	// Spawns All Objectives on random position
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	// Adds Score to the Picking Team and Checks If the Game Ended
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maze Game State")
 	void OnObjectivePickup(class AObjective* Objective, class APlayerController* PlayerController);
-	// 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	// Checks if there are any more objectives in the maze
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maze Game State")
 	void CheckGameEnd();
-	// 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, BlueprintPure)
+	// Gets The Winner Team or Spectator if Draw
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, BlueprintPure, Category = "Maze Game State")
 	ETeam GetWinnerTeam();
 
 	// Number of Objectives Collected by Team A
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Maze Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Maze Game State")
 	int32 TeamAScore = 0;
 	// Number of Objectives Collected by Team B
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Maze Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Maze Game State")
 	int32 TeamBScore = 0;
 	// All Spawned Objectives Refrence
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Maze Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Maze Game State")
 	TArray<class AObjective*> SpawnedObjectives;
 };
