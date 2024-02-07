@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-#include "DevomonDemoCharacter.generated.h"
+#include "MazePlayerCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
+class UInventoryComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -16,7 +17,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class ADevomonDemoCharacter : public ACharacter
+class AMazePlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -44,9 +45,25 @@ class ADevomonDemoCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Inventory Component */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
+	UInventoryComponent* InventoryComponent;
+
 public:
-	ADevomonDemoCharacter();
+	AMazePlayerCharacter();
 	
+	// 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Pickup(class APickable* PickableRef);
+	// 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UpdateObjectiveMeterValue();
+	// 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void SetCharacterColor();
+	// 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, BlueprintPure)
+	int32 GetNearestObjectiveDistance();
 
 protected:
 
@@ -55,6 +72,10 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ObjectiveMeter)
+	float UpdateObjectiveMeterInterval = .5f;
 			
 
 protected:

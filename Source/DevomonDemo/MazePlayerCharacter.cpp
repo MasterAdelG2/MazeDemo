@@ -1,22 +1,31 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "DevomonDemoCharacter.h"
+#include "MazePlayerCharacter.h"
+#include "Pickable.h"
+#include "Objective.h"
+#include "MazeBFL.h"
+#include "MazeGS.h"
+#include "MazePC.h"
+#include "MazeHUD.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "InventoryComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 //////////////////////////////////////////////////////////////////////////
-// ADevomonDemoCharacter
+// MazePlayerCharacter
 
-ADevomonDemoCharacter::ADevomonDemoCharacter()
+AMazePlayerCharacter::AMazePlayerCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -50,15 +59,22 @@ ADevomonDemoCharacter::ADevomonDemoCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Inventory Component
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
+	InventoryComponent->SetIsReplicated(true);
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMesh(TEXT("SkeletalMesh'/Game/Models/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
+	GetMesh()->SetSkeletalMesh(CharacterMesh.Object);
+
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
-void ADevomonDemoCharacter::BeginPlay()
+void AMazePlayerCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -67,12 +83,28 @@ void ADevomonDemoCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	//
+	if (!UKismetSystemLibrary::IsDedicatedServer(this))
+	{
+		SetCharacterColor();
+		UWorld* World = GetWorld();
+		if (ensure(World))
+		{
+			FTimerHandle THandle;
+			World->GetTimerManager().SetTimer(
+				THandle,
+				this,
+				&AMazePlayerCharacter::UpdateObjectiveMeterValue,
+				UpdateObjectiveMeterInterval,
+				true);
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void ADevomonDemoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AMazePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
@@ -82,10 +114,10 @@ void ADevomonDemoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ADevomonDemoCharacter::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMazePlayerCharacter::Move);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADevomonDemoCharacter::Look);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMazePlayerCharacter::Look);
 	}
 	else
 	{
@@ -93,7 +125,7 @@ void ADevomonDemoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	}
 }
 
-void ADevomonDemoCharacter::Move(const FInputActionValue& Value)
+void AMazePlayerCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -116,7 +148,7 @@ void ADevomonDemoCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-void ADevomonDemoCharacter::Look(const FInputActionValue& Value)
+void AMazePlayerCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
@@ -127,4 +159,62 @@ void ADevomonDemoCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AMazePlayerCharacter::Pickup_Implementation(APickable* PickableRef)
+{
+	if (ensure(PickableRef))
+	{
+		InventoryComponent->AddItem(PickableRef->ItemData);
+		AMazeGS* MazeGS = UMazeBFL::GetMazeGS(this);
+		AController* PawnController = GetController();
+		AObjective* objective = Cast<AObjective>(PickableRef);
+		if (ensure(objective) && 
+			ensure(MazeGS) && 
+			ensure(PawnController))
+		{
+			APlayerController* PC = Cast<APlayerController>(PawnController);
+			if (ensure(PC))
+			{
+				MazeGS->OnObjectivePickup(objective, PC);
+			}
+		}
+	}
+}
+
+void AMazePlayerCharacter::UpdateObjectiveMeterValue_Implementation()
+{
+	AMazePC* MazePC = UMazeBFL::GetMazePC(this);
+	if (ensure(MazePC))
+	{
+		AMazeHUD* MazeHUD = MazePC->GetHUD<AMazeHUD>();
+		if (ensure(MazeHUD))
+		{
+			MazeHUD->SetMeter(GetNearestObjectiveDistance());
+		}
+	}
+}
+
+int32 AMazePlayerCharacter::GetNearestObjectiveDistance_Implementation()
+{
+	int32 result = 0;
+	float MinimumDistance = 5000.f;
+	AMazeGS* MazeGS = UMazeBFL::GetMazeGS(this);
+	if (ensure(MazeGS))
+	{
+		TArray<AObjective*> AllObjectives = MazeGS->SpawnedObjectives;
+		for (AObjective* obj : AllObjectives)
+		{
+			if (ensure(obj))
+			{
+				float ObjDistance = FVector::Distance(GetActorLocation(), obj->GetActorLocation());
+				if (ObjDistance < MinimumDistance)
+				{
+					MinimumDistance = ObjDistance;
+				}
+			}
+		}
+		result = FMath::Max(0, 100.f - (MinimumDistance / 50.f));
+	}
+	return result;
 }
