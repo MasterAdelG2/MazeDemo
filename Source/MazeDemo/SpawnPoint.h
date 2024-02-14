@@ -7,7 +7,7 @@
 #include "SpawnPoint.generated.h"
 
 UCLASS()
-class DEVOMONDEMO_API ASpawnPoint : public AActor
+class MAZEDEMO_API ASpawnPoint : public AActor
 {
 	GENERATED_BODY()
 	

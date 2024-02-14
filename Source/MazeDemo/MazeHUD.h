@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class DEVOMONDEMO_API AMazeHUD : public AHUD
+class MAZEDEMO_API AMazeHUD : public AHUD
 {
 	GENERATED_BODY()
 	

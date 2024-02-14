@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "DevomonDemo.h"
+#include "MazeDemo.h"
 #include "Pickable.generated.h"
 
 UCLASS()
-class DEVOMONDEMO_API APickable : public AActor
+class MAZEDEMO_API APickable : public AActor
 {
 	GENERATED_BODY()
 	

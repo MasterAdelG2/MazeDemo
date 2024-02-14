@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "DevomonDemo.h"
+#include "MazeDemo.h"
 #include "InventoryComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class DEVOMONDEMO_API UInventoryComponent : public UActorComponent
+class MAZEDEMO_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
 

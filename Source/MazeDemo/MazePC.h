@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class DEVOMONDEMO_API AMazePC : public APlayerController
+class MAZEDEMO_API AMazePC : public APlayerController
 {
 	GENERATED_BODY()
 	

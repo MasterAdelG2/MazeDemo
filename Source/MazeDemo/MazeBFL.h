@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class DEVOMONDEMO_API UMazeBFL : public UBlueprintFunctionLibrary
+class MAZEDEMO_API UMazeBFL : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	

@@ -7,7 +7,7 @@
 #include "Objective.generated.h"
 
 UCLASS()
-class DEVOMONDEMO_API AObjective : public APickable
+class MAZEDEMO_API AObjective : public APickable
 {
 	GENERATED_BODY()
 	

@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
-#include "DevomonDemo.h"
+#include "MazeDemo.h"
 #include "MazeGS.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEVOMONDEMO_API AMazeGS : public AGameStateBase
+class MAZEDEMO_API AMazeGS : public AGameStateBase
 {
 	GENERATED_BODY()
 	

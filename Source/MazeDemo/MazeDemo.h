@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DevomonDemo.generated.h"
+#include "MazeDemo.generated.h"
 
 // Team choices
 UENUM(BlueprintType)

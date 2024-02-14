@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class DevomonDemo : ModuleRules
+public class MazeDemo : ModuleRules
 {
-	public DevomonDemo(ReadOnlyTargetRules Target) : base(Target)
+	public MazeDemo(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 

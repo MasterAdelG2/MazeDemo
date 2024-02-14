@@ -3,13 +3,13 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class DevomonDemoTarget : TargetRules
+public class MazeDemoTarget : TargetRules
 {
-	public DevomonDemoTarget(TargetInfo Target) : base(Target)
+	public MazeDemoTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V4;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
-		ExtraModuleNames.Add("DevomonDemo");
+		ExtraModuleNames.Add("MazeDemo");
 	}
 }

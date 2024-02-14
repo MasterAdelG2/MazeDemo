@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
-#include "DevomonDemo.h"
+#include "MazeDemo.h"
 #include "MazePS.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEVOMONDEMO_API AMazePS : public APlayerState
+class MAZEDEMO_API AMazePS : public APlayerState
 {
 	GENERATED_BODY()
 
